@@ -15,7 +15,7 @@ version = "1.0.0"
 [dependencies]
 gleam_json = ">= 2.0.0"
 gleam_stdlib = ">= 0.34.0 and < 2.0.0"
-glerd = ">= 3.0.1"
+glerd = ">= 4.0.0"
 justin = ">= 1.0.1"
 simplifile = ">= 1.7.0"
 
