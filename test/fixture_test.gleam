@@ -53,8 +53,11 @@ pub type TestTuple6 {
   TestTuple6(str_or_int: #(String, Int, String, Int, String, Int))
 }
 
+pub type TestRecord {
+  TestRecord(nested: NestedRecord)
+}
+
 pub type TestRecords {
   TestDict(dict: Dict(String, Int))
   TestResult(result_field: Result(Int, String))
-  TestRecord(nested: NestedRecord)
 }

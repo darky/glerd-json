@@ -114,3 +114,15 @@ pub fn test_tuple6_json_encode(x: fixture_test.TestTuple6) {
   ])
   |> json.to_string
 }
+
+pub fn test_record_json_encode(x: fixture_test.TestRecord) {
+  json.object([
+    #("nested", json.object([#("name", json.string(x.nested.name))])),
+  ])
+  |> json.to_string
+}
+
+pub fn nested_record_json_encode(x: fixture_test.NestedRecord) {
+  json.object([#("name", json.string(x.name))])
+  |> json.to_string
+}

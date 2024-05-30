@@ -58,5 +58,9 @@ pub fn generate_test() {
         ),
       ),
     ]),
+    #("TestRecord", "fixture_test", [
+      #("nested", types.IsRecord("NestedRecord")),
+    ]),
+    #("NestedRecord", "fixture_test", [#("name", types.IsString)]),
   ])
 }
