@@ -56,6 +56,46 @@ fn encode_field_type(name, typ) {
       let nested_type = encode_field_type("__just_type__", typ)
       "json.nullable(x." <> name <> ", " <> nested_type <> ")"
     }
+    types.IsTuple2(typ1, typ2) -> {
+      "json.preprocessed_array([
+        " <> encode_field_type("__just_type__", typ1) <> "(x." <> name <> ".0),
+        " <> encode_field_type("__just_type__", typ2) <> "(x." <> name <> ".1)
+      ])"
+    }
+    types.IsTuple3(typ1, typ2, typ3) -> {
+      "json.preprocessed_array([
+        " <> encode_field_type("__just_type__", typ1) <> "(x." <> name <> ".0),
+        " <> encode_field_type("__just_type__", typ2) <> "(x." <> name <> ".1),
+        " <> encode_field_type("__just_type__", typ3) <> "(x." <> name <> ".2)
+      ])"
+    }
+    types.IsTuple4(typ1, typ2, typ3, typ4) -> {
+      "json.preprocessed_array([
+        " <> encode_field_type("__just_type__", typ1) <> "(x." <> name <> ".0),
+        " <> encode_field_type("__just_type__", typ2) <> "(x." <> name <> ".1),
+        " <> encode_field_type("__just_type__", typ3) <> "(x." <> name <> ".2),
+        " <> encode_field_type("__just_type__", typ4) <> "(x." <> name <> ".3)
+      ])"
+    }
+    types.IsTuple5(typ1, typ2, typ3, typ4, typ5) -> {
+      "json.preprocessed_array([
+        " <> encode_field_type("__just_type__", typ1) <> "(x." <> name <> ".0),
+        " <> encode_field_type("__just_type__", typ2) <> "(x." <> name <> ".1),
+        " <> encode_field_type("__just_type__", typ3) <> "(x." <> name <> ".2),
+        " <> encode_field_type("__just_type__", typ4) <> "(x." <> name <> ".3),
+        " <> encode_field_type("__just_type__", typ5) <> "(x." <> name <> ".4)
+      ])"
+    }
+    types.IsTuple6(typ1, typ2, typ3, typ4, typ5, typ6) -> {
+      "json.preprocessed_array([
+        " <> encode_field_type("__just_type__", typ1) <> "(x." <> name <> ".0),
+        " <> encode_field_type("__just_type__", typ2) <> "(x." <> name <> ".1),
+        " <> encode_field_type("__just_type__", typ3) <> "(x." <> name <> ".2),
+        " <> encode_field_type("__just_type__", typ4) <> "(x." <> name <> ".3),
+        " <> encode_field_type("__just_type__", typ5) <> "(x." <> name <> ".4),
+        " <> encode_field_type("__just_type__", typ6) <> "(x." <> name <> ".5)
+      ])"
+    }
     x -> panic as { "Type encode not supported: " <> string.inspect(x) }
   }
 }

@@ -39,3 +39,78 @@ pub fn test_option_json_encode(x: fixture_test.TestOption) {
   json.object([#("some_int", json.nullable(x.some_int, json.int))])
   |> json.to_string
 }
+
+pub fn test_tuple2_json_encode(x: fixture_test.TestTuple2) {
+  json.object([
+    #(
+      "str_or_int",
+      json.preprocessed_array([
+        json.string(x.str_or_int.0),
+        json.int(x.str_or_int.1),
+      ]),
+    ),
+  ])
+  |> json.to_string
+}
+
+pub fn test_tuple3_json_encode(x: fixture_test.TestTuple3) {
+  json.object([
+    #(
+      "str_or_int",
+      json.preprocessed_array([
+        json.string(x.str_or_int.0),
+        json.int(x.str_or_int.1),
+        json.string(x.str_or_int.2),
+      ]),
+    ),
+  ])
+  |> json.to_string
+}
+
+pub fn test_tuple4_json_encode(x: fixture_test.TestTuple4) {
+  json.object([
+    #(
+      "str_or_int",
+      json.preprocessed_array([
+        json.string(x.str_or_int.0),
+        json.int(x.str_or_int.1),
+        json.string(x.str_or_int.2),
+        json.int(x.str_or_int.3),
+      ]),
+    ),
+  ])
+  |> json.to_string
+}
+
+pub fn test_tuple5_json_encode(x: fixture_test.TestTuple5) {
+  json.object([
+    #(
+      "str_or_int",
+      json.preprocessed_array([
+        json.string(x.str_or_int.0),
+        json.int(x.str_or_int.1),
+        json.string(x.str_or_int.2),
+        json.int(x.str_or_int.3),
+        json.string(x.str_or_int.4),
+      ]),
+    ),
+  ])
+  |> json.to_string
+}
+
+pub fn test_tuple6_json_encode(x: fixture_test.TestTuple6) {
+  json.object([
+    #(
+      "str_or_int",
+      json.preprocessed_array([
+        json.string(x.str_or_int.0),
+        json.int(x.str_or_int.1),
+        json.string(x.str_or_int.2),
+        json.int(x.str_or_int.3),
+        json.string(x.str_or_int.4),
+        json.int(x.str_or_int.5),
+      ]),
+    ),
+  ])
+  |> json.to_string
+}
