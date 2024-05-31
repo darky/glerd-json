@@ -1,4 +1,5 @@
 import gleam/dict
+import gleam/int
 import gleam/list
 import gleam/string
 import glerd/types
@@ -63,44 +64,19 @@ fn encode_field_type(name, typ, record_info_dict) {
       "json.nullable(x" <> name <> ", " <> nested_type <> ")"
     }
     types.IsTuple2(typ1, typ2) -> {
-      "json.preprocessed_array([
-        " <> encode_field_type("__just_type__", typ1, record_info_dict) <> "(x" <> name <> ".0),
-        " <> encode_field_type("__just_type__", typ2, record_info_dict) <> "(x" <> name <> ".1)
-      ])"
+      encode_tuple(name, [typ1, typ2], record_info_dict)
     }
     types.IsTuple3(typ1, typ2, typ3) -> {
-      "json.preprocessed_array([
-        " <> encode_field_type("__just_type__", typ1, record_info_dict) <> "(x" <> name <> ".0),
-        " <> encode_field_type("__just_type__", typ2, record_info_dict) <> "(x" <> name <> ".1),
-        " <> encode_field_type("__just_type__", typ3, record_info_dict) <> "(x" <> name <> ".2)
-      ])"
+      encode_tuple(name, [typ1, typ2, typ3], record_info_dict)
     }
     types.IsTuple4(typ1, typ2, typ3, typ4) -> {
-      "json.preprocessed_array([
-        " <> encode_field_type("__just_type__", typ1, record_info_dict) <> "(x" <> name <> ".0),
-        " <> encode_field_type("__just_type__", typ2, record_info_dict) <> "(x" <> name <> ".1),
-        " <> encode_field_type("__just_type__", typ3, record_info_dict) <> "(x" <> name <> ".2),
-        " <> encode_field_type("__just_type__", typ4, record_info_dict) <> "(x" <> name <> ".3)
-      ])"
+      encode_tuple(name, [typ1, typ2, typ3, typ4], record_info_dict)
     }
     types.IsTuple5(typ1, typ2, typ3, typ4, typ5) -> {
-      "json.preprocessed_array([
-        " <> encode_field_type("__just_type__", typ1, record_info_dict) <> "(x" <> name <> ".0),
-        " <> encode_field_type("__just_type__", typ2, record_info_dict) <> "(x" <> name <> ".1),
-        " <> encode_field_type("__just_type__", typ3, record_info_dict) <> "(x" <> name <> ".2),
-        " <> encode_field_type("__just_type__", typ4, record_info_dict) <> "(x" <> name <> ".3),
-        " <> encode_field_type("__just_type__", typ5, record_info_dict) <> "(x" <> name <> ".4)
-      ])"
+      encode_tuple(name, [typ1, typ2, typ3, typ4, typ5], record_info_dict)
     }
     types.IsTuple6(typ1, typ2, typ3, typ4, typ5, typ6) -> {
-      "json.preprocessed_array([
-        " <> encode_field_type("__just_type__", typ1, record_info_dict) <> "(x" <> name <> ".0),
-        " <> encode_field_type("__just_type__", typ2, record_info_dict) <> "(x" <> name <> ".1),
-        " <> encode_field_type("__just_type__", typ3, record_info_dict) <> "(x" <> name <> ".2),
-        " <> encode_field_type("__just_type__", typ4, record_info_dict) <> "(x" <> name <> ".3),
-        " <> encode_field_type("__just_type__", typ5, record_info_dict) <> "(x" <> name <> ".4),
-        " <> encode_field_type("__just_type__", typ6, record_info_dict) <> "(x" <> name <> ".5)
-      ])"
+      encode_tuple(name, [typ1, typ2, typ3, typ4, typ5, typ6], record_info_dict)
     }
     types.IsRecord(record_name) -> {
       let assert Ok(#(_, _, record_fields)) =
@@ -117,4 +93,15 @@ fn encode_field_type(name, typ, record_info_dict) {
     }
     x -> panic as { "Type encode not supported: " <> string.inspect(x) }
   }
+}
+
+fn encode_tuple(name, types, record_info_dict) {
+  let tuple_body =
+    types
+    |> list.index_map(fn(typ, i) {
+      let typ = encode_field_type("__just_type__", typ, record_info_dict)
+      typ <> "(x" <> name <> "." <> int.to_string(i) <> "),"
+    })
+    |> string.join("\n")
+  "json.preprocessed_array([" <> tuple_body <> "])"
 }
