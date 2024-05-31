@@ -91,6 +91,16 @@ fn encode_field_type(name, typ, record_info_dict) {
       })
       <> "])"
     }
+    types.IsResult(typ_ok, typ_err) -> {
+      let typ_ok = encode_field_type("", typ_ok, record_info_dict)
+      let typ_err = encode_field_type("", typ_err, record_info_dict)
+      "json.object({
+        case x" <> name <> " {
+          Ok(x) -> [#(\"ok\", " <> typ_ok <> ")]
+          Error(x) -> [#(\"error\", " <> typ_err <> ")]
+        }
+      })"
+    }
     x -> panic as { "Type encode not supported: " <> string.inspect(x) }
   }
 }

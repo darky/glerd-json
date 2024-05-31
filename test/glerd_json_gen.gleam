@@ -126,3 +126,18 @@ pub fn nested_record_json_encode(x: fixture_test.NestedRecord) {
   json.object([#("name", json.string(x.name))])
   |> json.to_string
 }
+
+pub fn test_result_json_encode(x: fixture_test.TestResult) {
+  json.object([
+    #(
+      "result_field",
+      json.object({
+        case x.result_field {
+          Ok(x) -> [#("ok", json.int(x))]
+          Error(x) -> [#("error", json.string(x))]
+        }
+      }),
+    ),
+  ])
+  |> json.to_string
+}
