@@ -34,13 +34,20 @@ pub fn generate(root, record_info) {
     " <> imports, fn(acc, rinfo) {
       let #(record_name, module_name, _) = rinfo
       let fn_name_prefix = justin.snake_case(record_name)
-      let object =
+      let encoded =
         encode_field_type("", types.IsRecord(record_name), record_info_dict)
+      let decoded =
+        decode_field_type(types.IsRecord(record_name), record_info_dict)
 
       acc <> "
         pub fn " <> fn_name_prefix <> "_json_encode(x: " <> module_name <> "." <> record_name <> ") {
-          " <> object <> "
+          " <> encoded <> "
           |> json.to_string
+        }
+
+        pub fn " <> fn_name_prefix <> "_json_decode(s: String) {
+          " <> decoded <> "
+          |> json.decode(s, _)
         }
       "
     })
@@ -128,6 +135,59 @@ fn encode_field_type(name, typ, record_info_dict) {
   }
 }
 
+fn decode_field_type(typ, record_info_dict) {
+  case typ {
+    types.IsString -> "dynamic.string"
+    types.IsInt -> "dynamic.int"
+    types.IsFloat -> "dynamic.float"
+    types.IsBool -> "dynamic.bool"
+    types.IsList(typ) ->
+      "dynamic.list(" <> decode_field_type(typ, record_info_dict) <> ")"
+    types.IsOption(typ) ->
+      "dynamic.optional(" <> decode_field_type(typ, record_info_dict) <> ")"
+    types.IsResult(typ, err_typ) ->
+      "dynamic.result("
+      <> decode_field_type(typ, record_info_dict)
+      <> ", "
+      <> decode_field_type(err_typ, record_info_dict)
+      <> ")"
+    types.IsDict(key_typ, val_typ) ->
+      "dynamic.dict("
+      <> decode_field_type(key_typ, record_info_dict)
+      <> ", "
+      <> decode_field_type(val_typ, record_info_dict)
+      <> ")"
+    types.IsTuple2(typ1, typ2) -> decode_tuple([typ1, typ2], record_info_dict)
+    types.IsTuple3(typ1, typ2, typ3) ->
+      decode_tuple([typ1, typ2, typ3], record_info_dict)
+    types.IsTuple4(typ1, typ2, typ3, typ4) ->
+      decode_tuple([typ1, typ2, typ3, typ4], record_info_dict)
+    types.IsTuple5(typ1, typ2, typ3, typ4, typ5) ->
+      decode_tuple([typ1, typ2, typ3, typ4, typ5], record_info_dict)
+    types.IsTuple6(typ1, typ2, typ3, typ4, typ5, typ6) ->
+      decode_tuple([typ1, typ2, typ3, typ4, typ5, typ6], record_info_dict)
+    types.IsRecord(record_name) -> {
+      let assert Ok(#(_, module_name, record_fields)) =
+        dict.get(record_info_dict, record_name)
+      let arity = list.length(record_fields) |> int.to_string()
+
+      "dynamic.decode" <> arity <> "(
+        " <> module_name <> "." <> record_name <> ",
+        " <> list.map(record_fields, fn(x) {
+        let #(fname, typ) = x
+        "dynamic.field(\""
+        <> fname
+        <> "\", "
+        <> decode_field_type(typ, record_info_dict)
+        <> ")"
+      })
+      |> string.join(",\n") <> "
+      )"
+    }
+    x -> panic as { "Type decode not supported: " <> string.inspect(x) }
+  }
+}
+
 fn encode_tuple(name, types, record_info_dict) {
   let tuple_body =
     types
@@ -137,4 +197,13 @@ fn encode_tuple(name, types, record_info_dict) {
     })
     |> string.join("\n")
   "json.preprocessed_array([" <> tuple_body <> "])"
+}
+
+fn decode_tuple(types, record_info_dict) {
+  let arity = list.length(types) |> int.to_string
+  let body =
+    types
+    |> list.map(fn(typ) { decode_field_type(typ, record_info_dict) })
+    |> string.join(",")
+  "dynamic.tuple" <> arity <> "(" <> body <> ")"
 }
