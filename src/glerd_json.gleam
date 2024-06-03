@@ -145,12 +145,13 @@ fn decode_field_type(typ, record_info_dict) {
       "dynamic.list(" <> decode_field_type(typ, record_info_dict) <> ")"
     types.IsOption(typ) ->
       "dynamic.optional(" <> decode_field_type(typ, record_info_dict) <> ")"
-    types.IsResult(typ, err_typ) ->
-      "dynamic.result("
-      <> decode_field_type(typ, record_info_dict)
-      <> ", "
-      <> decode_field_type(err_typ, record_info_dict)
-      <> ")"
+    types.IsResult(typ, err_typ) -> "dynamic.any([
+        dynamic.field(\"ok\", " <> decode_field_type(typ, record_info_dict) <> "),
+        dynamic.field(\"error\", " <> decode_field_type(
+        err_typ,
+        record_info_dict,
+      ) <> ")
+      ])"
     types.IsDict(key_typ, val_typ) ->
       "dynamic.dict("
       <> decode_field_type(key_typ, record_info_dict)
