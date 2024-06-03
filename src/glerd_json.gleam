@@ -2,6 +2,7 @@ import gleam/dict
 import gleam/int
 import gleam/list
 import gleam/string
+import gleamyshell
 import glerd/types
 import justin
 import simplifile
@@ -22,6 +23,7 @@ pub fn generate(root, record_info) {
       dict.insert(acc, name, ri)
     })
 
+  let gen_content =
   list.fold(record_info, "// this file was generated via glerd_json
 
     import gleam/json
@@ -40,7 +42,15 @@ pub fn generate(root, record_info) {
         }
       "
   })
-  |> simplifile.write("./" <> root <> "/glerd_json_gen.gleam", _)
+
+  let gen_file_path = "./" <> root <> "/glerd_json_gen.gleam"
+
+  let assert Ok(_) = simplifile.write(gen_file_path, gen_content)
+
+  let assert Ok(_) =
+    gleamyshell.execute("gleam", ".", ["format", gen_file_path])
+
+  Nil
 }
 
 fn encode_field_type(name, typ, record_info_dict) {

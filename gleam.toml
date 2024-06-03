@@ -1,5 +1,6 @@
 name = "glerd_json"
 version = "1.0.0"
+gleam = ">= 0.32.0"
 
 # Fill out these fields if you intend to generate HTML documentation or publish
 # your project to the Hex package manager.
@@ -15,7 +16,8 @@ version = "1.0.0"
 [dependencies]
 gleam_json = ">= 2.0.0"
 gleam_stdlib = ">= 0.34.0 and < 2.0.0"
-glerd = ">= 4.0.0"
+gleamyshell = ">= 0.5.0"
+glerd = ">= 4.1.1"
 justin = ">= 1.0.1"
 simplifile = ">= 1.7.0"
 
