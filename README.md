@@ -3,15 +3,34 @@
 [![Package Version](https://img.shields.io/hexpm/v/glerd_json)](https://hex.pm/packages/glerd_json)
 [![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/glerd_json/)
 
+Gleam JSON encoders/decoders codegen using Glerd
+
 ```sh
-gleam add glerd_json
+gleam add --dev glerd glerd_json
 ```
+
+#### 1. Generate types info
+
+Use [Glerd](https://github.com/darky/glerd)
+
+#### 2. Make module for JSON generation
+
+###### my_module.gleam
+
 ```gleam
 import glerd_json
+import glerd_gen
 
 pub fn main() {
-  // TODO: An example of the project in use
+  glerd_gen.record_info
+  |> glerd_json.generate("src", _)
 }
+```
+
+#### 3. Gen JSON encoders/decoders
+
+```sh
+gleam run -m my_module
 ```
 
 Further documentation can be found at <https://hexdocs.pm/glerd_json>.
@@ -19,7 +38,5 @@ Further documentation can be found at <https://hexdocs.pm/glerd_json>.
 ## Development
 
 ```sh
-gleam run   # Run the project
-gleam test  # Run the tests
-gleam shell # Run an Erlang shell
+gleam test # and then commit generated file
 ```
