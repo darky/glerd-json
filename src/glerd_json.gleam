@@ -110,16 +110,6 @@ fn encode_field_type(name, typ, record_info_dict) {
       })
       <> "])"
     }
-    types.IsResult(typ_ok, typ_err) -> {
-      let typ_ok = encode_field_type("", typ_ok, record_info_dict)
-      let typ_err = encode_field_type("", typ_err, record_info_dict)
-      "json.object({
-        case x" <> name <> " {
-          Ok(x) -> [#(\"ok\", " <> typ_ok <> ")]
-          Error(x) -> [#(\"error\", " <> typ_err <> ")]
-        }
-      })"
-    }
     types.IsDict(_, val_typ) -> {
       let val_typ =
         encode_field_type("__just_type__", val_typ, record_info_dict)
@@ -145,13 +135,6 @@ fn decode_field_type(typ, record_info_dict) {
       "dynamic.list(" <> decode_field_type(typ, record_info_dict) <> ")"
     types.IsOption(typ) ->
       "dynamic.optional(" <> decode_field_type(typ, record_info_dict) <> ")"
-    types.IsResult(typ, err_typ) -> "dynamic.any([
-        dynamic.field(\"ok\", " <> decode_field_type(typ, record_info_dict) <> "),
-        dynamic.field(\"error\", " <> decode_field_type(
-        err_typ,
-        record_info_dict,
-      ) <> ")
-      ])"
     types.IsDict(key_typ, val_typ) ->
       "dynamic.dict("
       <> decode_field_type(key_typ, record_info_dict)

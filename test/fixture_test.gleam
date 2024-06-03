@@ -57,10 +57,6 @@ pub type TestRecord {
   TestRecord(nested: NestedRecord)
 }
 
-pub type TestResult {
-  TestResult(result_field: Result(Int, String))
-}
-
 pub type TestDict {
   TestDict(dict: Dict(String, Int))
 }

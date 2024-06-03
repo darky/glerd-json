@@ -270,29 +270,6 @@ pub fn nested_record_json_decode(s: String) {
   |> json.decode(s, _)
 }
 
-pub fn test_result_json_encode(x: fixture_test.TestResult) {
-  json.object([
-    #(
-      "result_field",
-      json.object({
-        case x.result_field {
-          Ok(x) -> [#("ok", json.int(x))]
-          Error(x) -> [#("error", json.string(x))]
-        }
-      }),
-    ),
-  ])
-  |> json.to_string
-}
-
-pub fn test_result_json_decode(s: String) {
-  dynamic.decode1(
-    fixture_test.TestResult,
-    dynamic.field("result_field", dynamic.result(dynamic.int, dynamic.string)),
-  )
-  |> json.decode(s, _)
-}
-
 pub fn test_dict_json_encode(x: fixture_test.TestDict) {
   json.object([
     #(

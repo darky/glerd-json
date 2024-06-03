@@ -37,10 +37,6 @@ const nested_json = "{\"nested\":{\"name\":\"test\"}}"
 
 const dict_json = "{\"dict\":{\"test_field\":123}}"
 
-const result_json = "{\"result_field\":{\"ok\":123}}"
-
-const result_err_json = "{\"result_field\":{\"error\":\"test\"}}"
-
 pub fn main() {
   gleeunit.main()
 }
@@ -101,9 +97,6 @@ pub fn generate_test() {
       #("nested", types.IsRecord("NestedRecord")),
     ]),
     #("NestedRecord", "fixture_test", [#("name", types.IsString)]),
-    #("TestResult", "fixture_test", [
-      #("result_field", types.IsResult(types.IsInt, types.IsString)),
-    ]),
     #("TestDict", "fixture_test", [
       #("dict", types.IsDict(types.IsString, types.IsInt)),
     ]),
@@ -296,28 +289,4 @@ pub fn decode_dict_test() {
   |> should.equal(
     Ok(fixture_test.TestDict(dict.from_list([#("test_field", 123)]))),
   )
-}
-
-pub fn encode_result_test() {
-  fixture_test.TestResult(Ok(123))
-  |> glerd_json_gen.test_result_json_encode
-  |> should.equal(result_json)
-}
-
-pub fn decode_result_test() {
-  result_json
-  |> glerd_json_gen.test_result_json_decode
-  |> should.equal(Ok(fixture_test.TestResult(Ok(123))))
-}
-
-pub fn encode_result_err_test() {
-  fixture_test.TestResult(Error("test"))
-  |> glerd_json_gen.test_result_json_encode
-  |> should.equal(result_err_json)
-}
-
-pub fn decode_result_err_test() {
-  result_err_json
-  |> glerd_json_gen.test_result_json_decode
-  |> should.equal(Ok(fixture_test.TestResult(Error("test"))))
 }
