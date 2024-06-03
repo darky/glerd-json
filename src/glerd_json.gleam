@@ -24,24 +24,26 @@ pub fn generate(root, record_info) {
     })
 
   let gen_content =
-  list.fold(record_info, "// this file was generated via glerd_json
+    list.fold(record_info, "// this file was generated via glerd_json
 
     import gleam/json
     import gleam/dynamic
+    import gleam/dict
+    import gleam/list
 
     " <> imports, fn(acc, rinfo) {
-    let #(record_name, module_name, _) = rinfo
-    let fn_name_prefix = justin.snake_case(record_name)
-    let object =
-      encode_field_type("", types.IsRecord(record_name), record_info_dict)
+      let #(record_name, module_name, _) = rinfo
+      let fn_name_prefix = justin.snake_case(record_name)
+      let object =
+        encode_field_type("", types.IsRecord(record_name), record_info_dict)
 
-    acc <> "
+      acc <> "
         pub fn " <> fn_name_prefix <> "_json_encode(x: " <> module_name <> "." <> record_name <> ") {
           " <> object <> "
           |> json.to_string
         }
       "
-  })
+    })
 
   let gen_file_path = "./" <> root <> "/glerd_json_gen.gleam"
 
@@ -110,6 +112,17 @@ fn encode_field_type(name, typ, record_info_dict) {
           Error(x) -> [#(\"error\", " <> typ_err <> ")]
         }
       })"
+    }
+    types.IsDict(_, val_typ) -> {
+      let val_typ =
+        encode_field_type("__just_type__", val_typ, record_info_dict)
+      "json.object(
+        x" <> name <> "
+        |> dict.to_list
+        |> list.map(fn(x) {
+          #(x.0," <> val_typ <> "(x.1))
+        })
+      )"
     }
     x -> panic as { "Type encode not supported: " <> string.inspect(x) }
   }

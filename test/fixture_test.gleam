@@ -61,6 +61,6 @@ pub type TestResult {
   TestResult(result_field: Result(Int, String))
 }
 
-pub type TestRecords {
+pub type TestDict {
   TestDict(dict: Dict(String, Int))
 }

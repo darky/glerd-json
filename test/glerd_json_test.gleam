@@ -65,5 +65,8 @@ pub fn generate_test() {
     #("TestResult", "fixture_test", [
       #("result_field", types.IsResult(types.IsInt, types.IsString)),
     ]),
+    #("TestDict", "fixture_test", [
+      #("dict", types.IsDict(types.IsString, types.IsInt)),
+    ]),
   ])
 }

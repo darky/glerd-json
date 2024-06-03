@@ -1,7 +1,9 @@
 // this file was generated via glerd_json
 
+import gleam/dict
 import gleam/dynamic
 import gleam/json
+import gleam/list
 
 import fixture_test
 
@@ -137,6 +139,20 @@ pub fn test_result_json_encode(x: fixture_test.TestResult) {
           Error(x) -> [#("error", json.string(x))]
         }
       }),
+    ),
+  ])
+  |> json.to_string
+}
+
+pub fn test_dict_json_encode(x: fixture_test.TestDict) {
+  json.object([
+    #(
+      "dict",
+      json.object(
+        x.dict
+        |> dict.to_list
+        |> list.map(fn(x) { #(x.0, json.int(x.1)) }),
+      ),
     ),
   ])
   |> json.to_string
