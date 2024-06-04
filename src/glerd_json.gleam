@@ -11,7 +11,7 @@ pub fn generate(root, record_info) {
   let imports =
     record_info
     |> list.map(fn(ri) {
-      let #(_, module_name, _) = ri
+      let #(_, module_name, _, _) = ri
       "import " <> module_name
     })
     |> list.unique
@@ -19,7 +19,7 @@ pub fn generate(root, record_info) {
 
   let record_info_dict =
     list.fold(record_info, dict.new(), fn(acc, ri) {
-      let #(name, _, _) = ri
+      let #(name, _, _, _) = ri
       dict.insert(acc, name, ri)
     })
 
@@ -32,7 +32,7 @@ pub fn generate(root, record_info) {
     import gleam/list
 
     " <> imports, fn(acc, rinfo) {
-      let #(record_name, module_name, _) = rinfo
+      let #(record_name, module_name, _, _) = rinfo
       let fn_name_prefix = justin.snake_case(record_name)
       let encoded =
         encode_field_type("", types.IsRecord(record_name), record_info_dict)
@@ -98,7 +98,7 @@ fn encode_field_type(name, typ, record_info_dict) {
       encode_tuple(name, [typ1, typ2, typ3, typ4, typ5, typ6], record_info_dict)
     }
     types.IsRecord(record_name) -> {
-      let assert Ok(#(_, _, record_fields)) =
+      let assert Ok(#(_, _, record_fields, _)) =
         dict.get(record_info_dict, record_name)
 
       "json.object(["
@@ -151,7 +151,7 @@ fn decode_field_type(typ, record_info_dict) {
     types.IsTuple6(typ1, typ2, typ3, typ4, typ5, typ6) ->
       decode_tuple([typ1, typ2, typ3, typ4, typ5, typ6], record_info_dict)
     types.IsRecord(record_name) -> {
-      let assert Ok(#(_, module_name, record_fields)) =
+      let assert Ok(#(_, module_name, record_fields, _)) =
         dict.get(record_info_dict, record_name)
       let arity = list.length(record_fields) |> int.to_string()
 

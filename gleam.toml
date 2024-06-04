@@ -9,7 +9,7 @@ gleam = ">= 1.2.1"
 gleam_json = ">= 2.0.0"
 gleam_stdlib = ">= 0.34.0 and < 2.0.0"
 gleamyshell = ">= 0.5.0"
-glerd = ">= 4.1.1"
+glerd = ">= 4.2.0"
 justin = ">= 1.0.1"
 simplifile = ">= 1.7.0"
 
