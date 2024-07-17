@@ -2,6 +2,8 @@
 
 [![Package Version](https://img.shields.io/hexpm/v/glerd_json)](https://hex.pm/packages/glerd_json)
 [![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/glerd_json/)
+![Erlang-compatible](https://img.shields.io/badge/target-erlang-a2003e)
+![JavaScript-compatible](https://img.shields.io/badge/target-javascript-f1e05a)
 
 Gleam JSON encoders/decoders codegen using Glerd
 
